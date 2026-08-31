@@ -1,0 +1,7 @@
+rank,signal,evidence,action
+1,Content freshness (days since last update),Top permutation-importance feature for forward position movement by a wide margin; also negatively associated with CTR as pages age.,Rebuild the refresh calendar around genuinely stale pages first — this is the single strongest lever in the data.
+2,Schema markup presence,"Positive, consistent association with CTR at a given position, holding vertical and word count constant.",Add structured data to pages that visibly rank but under-click; treat as a checklist item on every page audit.
+3,Internal link count,Second-strongest movement-model signal after freshness; more internally-linked pages show a higher rate of forward position improvement.,Audit orphaned or thinly-linked pages inside high-value clusters and add contextual internal links.
+4,Vertical / content type,Landing and product pages show meaningfully higher baseline CTR than blog/guide content at comparable positions.,"Benchmark CTR against a vertical-specific baseline, not one warehouse-wide average — otherwise blog content looks worse than it is."
+5,Word count / content depth,Small positive CTR association; effectively no signal for forward movement once freshness and links are accounted for.,"Deprioritize word-count targets as a standalone lever; use depth to serve intent, not to chase ranking movement."
+6,Page speed & mobile-friendliness,"Small, positive, consistent CTR association; not a top movement-model feature.","Keep as ongoing technical hygiene rather than a headline initiative — necessary, not sufficient."

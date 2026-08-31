@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Actually Moves Rankings — A Signal-Level Study</title>
+<meta name="description" content="A leakage-audited study of which content and technical signals associate with search visibility, clicks, and forward ranking movement.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16232F;
+    --ink-soft:#3E4E5C;
+    --paper:#F5F4EF;
+    --paper-raised:#FFFFFF;
+    --navy:#1F3A52;
+    --steel:#3B6E8F;
+    --gold:#A9782E;
+    --rust:#B0462F;
+    --line:#DAD6CB;
+    --line-strong:#B9B2A0;
+    --max:760px;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --sans: 'IBM Plex Sans', -apple-system, Segoe UI, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gold); color:#fff;}
+
+  a{color:var(--steel);}
+  a:hover{color:var(--navy);}
+
+  .layout{
+    display:grid;
+    grid-template-columns: 220px minmax(0,1fr);
+    gap:48px;
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+  @media (max-width: 920px){
+    .layout{grid-template-columns: 1fr; padding:0 20px;}
+    nav.toc{display:none;}
+  }
+
+  nav.toc{
+    position:sticky;
+    top:40px;
+    align-self:start;
+    padding-top:120px;
+    font-size:13.5px;
+  }
+  nav.toc .toc-label{
+    font-weight:600;
+    letter-spacing:.02em;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  nav.toc ol{list-style:none; margin:0; padding:0; border-left:1px solid var(--line);}
+  nav.toc li{margin:0;}
+  nav.toc a{
+    display:block;
+    padding:6px 0 6px 14px;
+    color:var(--ink-soft);
+    text-decoration:none;
+    border-left:2px solid transparent;
+    margin-left:-1px;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  nav.toc a:hover{color:var(--navy);}
+  nav.toc a.active{
+    color:var(--navy);
+    border-left-color:var(--gold);
+    font-weight:600;
+  }
+
+  main{min-width:0;}
+
+  header.hero{
+    padding:100px 0 56px;
+    max-width:var(--max);
+  }
+  .kicker{
+    font-family:var(--sans);
+    font-size:13.5px;
+    color:var(--steel);
+    font-weight:600;
+    margin-bottom:18px;
+  }
+  h1.title{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:44px;
+    line-height:1.14;
+    margin:0 0 20px;
+    color:var(--navy);
+    letter-spacing:-0.01em;
+  }
+  .dek{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:20px;
+    color:var(--ink-soft);
+    margin:0 0 40px;
+    max-width:640px;
+  }
+
+  .abstract{
+    border-left:3px solid var(--gold);
+    padding:4px 0 4px 24px;
+    margin:0 0 40px;
+    font-size:16px;
+    color:var(--ink-soft);
+  }
+  .abstract strong{color:var(--ink);}
+
+  .stat-row{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    margin:0 0 8px;
+  }
+  @media (max-width:560px){ .stat-row{grid-template-columns:1fr;} }
+  .stat{
+    background:var(--paper-raised);
+    padding:22px 20px;
+  }
+  .stat .num{
+    font-family:var(--serif);
+    font-size:32px;
+    font-weight:600;
+    color:var(--navy);
+    line-height:1;
+  }
+  .stat .num small{font-size:16px; font-weight:500; color:var(--ink-soft);}
+  .stat .label{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:8px;
+    line-height:1.4;
+  }
+
+  .status-note{
+    margin:28px 0 0;
+    font-size:14px;
+    color:var(--rust);
+    background:#FBF0EC;
+    border:1px solid #ECD3C8;
+    padding:14px 18px;
+    max-width:var(--max);
+  }
+  .status-note strong{display:block; margin-bottom:4px; color:var(--rust);}
+
+  section{
+    max-width:var(--max);
+    padding:52px 0;
+    border-top:1px solid var(--line);
+  }
+  section:first-of-type{border-top:none;}
+
+  .section-num{
+    font-family:var(--sans);
+    font-size:13px;
+    font-weight:600;
+    color:var(--gold);
+    letter-spacing:.04em;
+    margin-bottom:10px;
+  }
+  h2{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:28px;
+    color:var(--navy);
+    margin:0 0 20px;
+    letter-spacing:-0.01em;
+  }
+  h3{
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:16.5px;
+    color:var(--ink);
+    margin:32px 0 12px;
+  }
+  p{margin:0 0 16px; color:var(--ink-soft);}
+  p strong{color:var(--ink);}
+  ul, ol.plain{margin:0 0 16px; padding-left:22px; color:var(--ink-soft);}
+  li{margin-bottom:6px;}
+
+  figure{margin:28px 0;}
+  figure img{width:100%; height:auto; border:1px solid var(--line); background:#fff;}
+  figcaption{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin-top:10px;
+    padding-left:14px;
+    border-left:2px solid var(--line);
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14.5px;
+    margin:20px 0;
+  }
+  th, td{
+    text-align:left;
+    padding:10px 12px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  th{
+    font-weight:600;
+    color:var(--navy);
+    border-bottom:2px solid var(--line-strong);
+    font-size:13px;
+  }
+  td.num, th.num{font-variant-numeric: tabular-nums; text-align:right; white-space:nowrap;}
+
+  code, .mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size:.92em;
+    background:#EDEAE0;
+    padding:1px 5px;
+    border-radius:3px;
+  }
+  pre{
+    background:var(--navy);
+    color:#EAEFF3;
+    padding:16px 18px;
+    overflow-x:auto;
+    font-size:13.5px;
+    line-height:1.6;
+    border-radius:4px;
+  }
+  pre code{background:none; padding:0; color:inherit;}
+
+  .callout{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-left:3px solid var(--steel);
+    padding:16px 20px;
+    font-size:14.5px;
+    color:var(--ink-soft);
+    margin:20px 0;
+  }
+  .callout strong{color:var(--navy);}
+
+  /* Ranked recommendations — the signature element */
+  .playbook{list-style:none; margin:0; padding:0;}
+  .playbook li{
+    display:grid;
+    grid-template-columns:64px 1fr;
+    gap:20px;
+    padding:26px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .playbook li:first-child{padding-top:8px;}
+  .rank-num{
+    font-family:var(--serif);
+    font-size:38px;
+    font-weight:600;
+    color:var(--gold);
+    line-height:1;
+  }
+  .playbook h4{
+    font-family:var(--sans);
+    font-size:17px;
+    font-weight:600;
+    color:var(--ink);
+    margin:0 0 8px;
+  }
+  .playbook .evidence{font-size:14px; color:var(--ink-soft); margin:0 0 8px;}
+  .playbook .action{
+    font-size:14.5px;
+    color:var(--navy);
+    background:#EDF2F5;
+    padding:9px 12px;
+    display:inline-block;
+  }
+
+  .exclusions{font-size:14.5px;}
+  .exclusions li{margin-bottom:10px;}
+
+  .credit-box{
+    background:var(--navy);
+    color:#EAEFF3;
+    padding:28px 28px;
+    margin-top:8px;
+  }
+  .credit-box a{color:#CFE0EA; font-weight:600;}
+  .credit-box p{color:#C9D3DA; margin-bottom:0;}
+
+  footer{
+    max-width:var(--max);
+    padding:40px 0 100px;
+    font-size:13.5px;
+    color:var(--ink-soft);
+  }
+
+  .repo-links{display:flex; flex-wrap:wrap; gap:10px; margin:16px 0 4px;}
+  .repo-links a{
+    display:inline-block;
+    border:1px solid var(--line-strong);
+    padding:7px 14px;
+    font-size:13.5px;
+    text-decoration:none;
+    color:var(--navy);
+    background:var(--paper-raised);
+  }
+  .repo-links a:hover{border-color:var(--steel); color:var(--steel);}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-label">Contents</div>
+    <ol id="toc-list">
+      <li><a href="#introduction">1. Introduction</a></li>
+      <li><a href="#data">2. Data</a></li>
+      <li><a href="#methodology">3. Methodology</a></li>
+      <li><a href="#results">4. Results</a></li>
+      <li><a href="#limitations">5. Limitations</a></li>
+      <li><a href="#recommendations">6. Recommendations</a></li>
+      <li><a href="#reproducibility">7. Reproducibility</a></li>
+      <li><a href="#acknowledgments">Acknowledgments</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="kicker">Search Intelligence Capstone · Ranking Signal Analysis</div>
+      <h1 class="title">What actually moves rankings</h1>
+      <p class="dek">A signal-level study of 900 pages over 26 weeks — which content and technical signals associate with visibility, clicks, and forward position movement.</p>
+
+      <div class="abstract">
+        <strong>Abstract.</strong> Which safe, page-level content and technical signals are associated with search visibility, clicks, and forward ranking movement — and how much can they be trusted to guide action? Using six months of weekly page-level performance and content/technical signals across 900 pages, this study built a leakage-audited, time-aware pipeline: a linear model for click-through-rate association and a gradient-boosted classifier for forward position movement, both validated against a naive freshness-only baseline and cross-checked with grouped cross-validation. Content freshness was the dominant driver of forward position movement, structured data and internal linking added a smaller but consistent lift, and the full signal model modestly outperformed the naive baseline (test AUC 0.53 vs. 0.49 on held-out future weeks, ~0.60 in cross-validated robustness checks). These are directional associations from a time-boxed analysis, not causal or algorithmic claims, and are best used to shortlist pages for review rather than to trigger automatic action. The result is a ranked, evidence-scored action playbook — refresh cadence first, then structured data and internal linking — for teams deciding where to spend limited content-ops time.
+      </div>
+
+      <div class="stat-row">
+        <div class="stat">
+          <div class="num">0.53 <small>vs 0.49</small></div>
+          <div class="label">Movement model test AUC vs. freshness-only baseline</div>
+        </div>
+        <div class="stat">
+          <div class="num">0.60<small> ± 0.02</small></div>
+          <div class="label">Grouped 5-fold CV AUC — the more stable read</div>
+        </div>
+        <div class="stat">
+          <div class="num">12.9<small>%</small></div>
+          <div class="label">Share of pages that improved ≥3 positions in the next 4 weeks</div>
+        </div>
+      </div>
+
+      <div class="status-note">
+        <strong>Data status — read before citing any number below</strong>
+        This build runs on a synthetic placeholder panel, schema-matched to the real FlyRank ML Internship warehouse (see Section 2). It exists so the full pipeline — data intake through ranked recommendations — runs end-to-end today. Every number on this page will change once notebooks 01–04 are re-run against the real gated dataset; see Section 7 for the one-line swap.
+      </div>
+    </header>
+
+    <section id="introduction">
+      <div class="section-num">Section 1</div>
+      <h2>Introduction</h2>
+      <p>Content and SEO teams sit on a constant, low-grade decision: with limited hours, which pages get refreshed, restructured, linked-to, or left alone this quarter? Intuition and tribal knowledge ("older pages need refreshing," "long content ranks better") often stand in for evidence, because connecting a page's content and technical attributes to what happens to it in search is genuinely hard — outcomes are noisy, algorithms are opaque, and most easy correlations (position vs. clicks) are true almost by definition rather than actionable.</p>
+      <p>This capstone asks a narrower, answerable version of that question: <strong>across a warehouse of pages tracked weekly, which safe, page-owned signals — content depth, structured data, internal linking, freshness, technical health — are associated with clicks and with a page's position getting measurably better over the following weeks?</strong> The goal is not to explain or reverse-engineer a search algorithm, which the public rule for this project explicitly rules out, but to produce a defensible, evidence-ranked shortlist that a content team can act on with appropriate confidence.</p>
+      <p>The decision this work supports is concrete: given a backlog of pages and a fixed content-ops budget, which signal should a team invest in first, second, and third — and how much should they trust the resulting shortlist versus treating it as one input among several?</p>
+    </section>
+
+    <section id="data">
+      <div class="section-num">Section 2</div>
+      <h2>Data</h2>
+      <p>The pipeline is built against the schema of the FlyRank ML Internship warehouse: a page-week panel of search performance paired with content and technical signals. <strong>The current run uses a synthetic placeholder generated to that same schema</strong> (900 pages × 26 weeks, five content verticals), not the real gated release, because this build was produced without Hugging Face token access. The generator, assumptions, and exact swap-in query are documented in <code>work/data/generate_synthetic_data.py</code>.</p>
+      <h3>Table &amp; window</h3>
+      <p>One page-week table, 23,400 rows: <code>page_id</code>, <code>vertical</code>, <code>week</code> (0–25, ≈6 months), plus outcome columns (<code>impressions</code>, <code>clicks</code>, <code>ctr</code>, <code>avg_position</code>) and signal columns (<code>word_count</code>, <code>has_schema_markup</code>, <code>num_internal_links</code>, <code>num_external_links</code>, <code>days_since_last_update</code>, <code>mobile_friendly_score</code>, <code>page_speed_score</code>, <code>title_length</code>, <code>meta_description_length</code>, <code>h1_count</code>, <code>image_count</code>, <code>alt_text_coverage</code>, <code>readability_score</code>).</p>
+      <h3>Exclusions (public-safe)</h3>
+      <ul class="exclusions">
+        <li><strong>Last 4 weeks of the panel, for label purposes only</strong> — the forward-movement label needs a full 4-week-ahead window; rows without one are dropped from the labeled modeling table (they remain in the raw panel used for EDA).</li>
+        <li><strong>No query-level or click-level raw exports</strong> — everything here is a page-week aggregate; no individual queries, URLs, or credentials appear anywhere in this repo.</li>
+        <li><strong>No missingness-driven exclusions</strong> — the panel (real or synthetic) had zero nulls and no range violations at intake (Section-1 notebook data-quality checks).</li>
+      </ul>
+      <figure>
+        <img src="assets/01_outcome_distributions.png" alt="Histograms of average position, CTR, and total impressions per page">
+        <figcaption>Fig. 1 — Distribution of the two primary outcomes (position, CTR) and total impressions per page across the panel.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/01_weekly_trend.png" alt="Warehouse-wide weekly trend of average position and CTR">
+        <figcaption>Fig. 2 — Warehouse-wide weekly average position and CTR. The mild cyclical wobble is why week is included as a feature and why validation is time-aware rather than a random shuffle.</figcaption>
+      </figure>
+    </section>
+
+    <section id="methodology">
+      <div class="section-num">Section 3</div>
+      <h2>Methodology</h2>
+      <h3>Label definition</h3>
+      <p>Two outcomes are studied. <strong>CTR</strong> is used directly as a continuous outcome. <strong>Forward position movement</strong> is engineered as a binary label: for a page at week <em>t</em>, the label is 1 if its average position improves by at least 3 spots, comparing week <em>t</em> against the mean of weeks <em>t+1…t+4</em> — a genuinely forward-looking window, built only from data that would have been unknown at prediction time.</p>
+      <h3>Features</h3>
+      <p>All features are known as of week <em>t</em>: log word count, schema markup presence, internal/external link counts, days since last update, mobile-friendliness and page-speed scores, title-length deviation from a common SERP-friendly length, meta description length, H1 count, image count, alt-text coverage, readability score, internal-links-per-1000-words, vertical, and week itself.</p>
+      <h3>Baseline &amp; model</h3>
+      <p>The baseline is deliberately naive: a single-feature logistic regression on <code>days_since_last_update</code> alone, matching the heuristic a stakeholder might already use ("just refresh old stuff"). The full model is a gradient-boosted classifier (<code>HistGradientBoostingClassifier</code>) on the complete feature set. CTR association uses a standardized linear regression so coefficients are directly interpretable as direction and relative magnitude.</p>
+      <h3>Validation design</h3>
+      <p>Primary split is <strong>time-aware</strong>: train on weeks 0–14, tune on weeks 15–17, evaluate once on weeks 18–21 — the model never sees its own future. As a second, independent check, a <strong>grouped 5-fold cross-validation by <code>page_id</code></strong> confirms the result isn't an artifact of specific pages dominating one split, and that it holds for pages the model has never seen at all (Section 5 of the leakage-checks notebook has the full audit table).</p>
+      <div class="callout"><strong>Why report both validation numbers.</strong> The time-aware test AUC and the grouped-CV AUC diverge somewhat (0.53 vs. 0.60) — see Section 4. Reporting only the more flattering number would misrepresent how reliable the signal actually is.</div>
+    </section>
+
+    <section id="results">
+      <div class="section-num">Section 4</div>
+      <h2>Results</h2>
+      <h3>CTR association</h3>
+      <p>The linear CTR model explains a modest but real share of variance out-of-time (<strong>test R² = 0.127</strong>). Structured data, longer content, denser internal linking, and faster pages all associate with higher CTR at a given position; older, un-refreshed pages and (holding position fixed) pages with more external links associate with lower CTR. Vertical matters more than any single content signal — landing and product pages out-click blog and guide content at comparable positions.</p>
+      <figure>
+        <img src="assets/03_ctr_signal_coefficients.png" alt="Standardized CTR coefficients by signal">
+        <figcaption>Fig. 3 — Standardized association with CTR, holding other signals constant. Bars right of zero associate with higher CTR at the same position.</figcaption>
+      </figure>
+
+      <h3>Forward position movement</h3>
+      <p>The freshness-only baseline is barely better than chance on held-out future weeks (<strong>AUC 0.49</strong>) — refreshing at random doesn't reliably predict movement on its own. The full signal model does modestly better on the same weeks (<strong>AUC 0.53</strong>), and considerably better under grouped cross-validation across the whole panel (<strong>AUC 0.60 ± 0.02</strong>), which is the more trustworthy estimate of how the signal generalizes to pages the model hasn't seen.</p>
+      <figure>
+        <img src="assets/03_model_vs_baseline.png" alt="Bar chart comparing baseline and full model test AUC">
+        <figcaption>Fig. 4 — Baseline vs. full signal model, same held-out future weeks. Dashed line marks random performance (AUC 0.5).</figcaption>
+      </figure>
+      <p>Permutation importance on the full model shows <strong>freshness dwarfing every other feature</strong> for movement prediction, with internal link count a distant second and everything else contributing little on its own — which also explains why the full model's lift over the freshness-only baseline is modest rather than dramatic.</p>
+      <figure>
+        <img src="assets/03_permutation_importance.png" alt="Permutation importance bar chart for the movement model">
+        <figcaption>Fig. 5 — Permutation importance (mean AUC drop when a signal is shuffled), evaluated on held-out future weeks.</figcaption>
+      </figure>
+
+      <table>
+        <thead><tr><th>Question</th><th>Metric</th><th class="num">Baseline</th><th class="num">Full model</th></tr></thead>
+        <tbody>
+          <tr><td>CTR association</td><td>Test R²</td><td class="num">—</td><td class="num">0.127</td></tr>
+          <tr><td>Forward movement</td><td>Test AUC (weeks 18–21)</td><td class="num">0.492</td><td class="num">0.531</td></tr>
+          <tr><td>Forward movement</td><td>Grouped 5-fold CV AUC</td><td class="num">—</td><td class="num">0.596 ± 0.015</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="limitations">
+      <div class="section-num">Section 5</div>
+      <h2>Limitations &amp; honest framing</h2>
+      <p>Every result on this page is <strong>observed and directional</strong>, drawn from association models on one time-boxed panel — none of it is a causal claim, and none of it purports to explain or reverse-engineer how a search algorithm works.</p>
+      <ul>
+        <li><strong>Modest movement signal.</strong> AUC 0.53 (time-aware) to 0.60 (grouped CV) means the model ranks pages usefully but is far from a precise predictor. Treat it as a shortlist generator for human review, not an auto-trigger for action.</li>
+        <li><strong>Placeholder data.</strong> All numbers above come from a synthetic panel schema-matched to the real warehouse (Section 2). They will shift — possibly meaningfully — once re-run on the real FlyRank data, and should not be cited as production findings until that happens.</li>
+        <li><strong>Vertical and base-rate sensitivity.</strong> Only 12.9% of page-weeks show a ≥3-position forward improvement; class imbalance means AUC should be read alongside average precision (0.13 baseline vs. 0.15 full model), not in isolation.</li>
+        <li><strong>Single threshold and window.</strong> The 3-position / 4-week label definition is one reasonable choice, not the only one; a stricter or looser threshold would shift which signals look most important.</li>
+      </ul>
+    </section>
+
+    <section id="recommendations">
+      <div class="section-num">Section 6</div>
+      <h2>Ranked recommendations</h2>
+      <p>Ordered by the strength of the larger of its two pieces of evidence — standardized CTR coefficient or permutation-importance AUC drop — so a signal ranks highly if it meaningfully moves <em>either</em> outcome.</p>
+      <ol class="playbook">
+        <li>
+          <div class="rank-num">01</div>
+          <div>
+            <h4>Rebuild the refresh calendar around genuinely stale pages first</h4>
+            <p class="evidence">Evidence: by far the top permutation-importance feature for forward movement; also negatively associated with CTR as pages age.</p>
+            <span class="action">Action: prioritize content refresh cadence above every other lever in this list.</span>
+          </div>
+        </li>
+        <li>
+          <div class="rank-num">02</div>
+          <div>
+            <h4>Add structured data to pages that rank but under-click</h4>
+            <p class="evidence">Evidence: positive, consistent CTR association holding vertical and word count constant.</p>
+            <span class="action">Action: make schema markup a standing checklist item on every page audit.</span>
+          </div>
+        </li>
+        <li>
+          <div class="rank-num">03</div>
+          <div>
+            <h4>Audit internal linking on high-value, thinly-linked pages</h4>
+            <p class="evidence">Evidence: second-strongest movement-model signal after freshness.</p>
+            <span class="action">Action: find orphaned or under-linked pages inside high-value topic clusters and add contextual links.</span>
+          </div>
+        </li>
+        <li>
+          <div class="rank-num">04</div>
+          <div>
+            <h4>Benchmark CTR by vertical, not against a single warehouse average</h4>
+            <p class="evidence">Evidence: landing and product pages show meaningfully higher baseline CTR than blog or guide content at comparable positions.</p>
+            <span class="action">Action: set vertical-specific CTR baselines before flagging a page as "underperforming."</span>
+          </div>
+        </li>
+        <li>
+          <div class="rank-num">05</div>
+          <div>
+            <h4>Deprioritize word count as a standalone lever</h4>
+            <p class="evidence">Evidence: small positive CTR association; effectively no signal for forward movement once freshness and links are accounted for.</p>
+            <span class="action">Action: write to serve intent, not to hit a length target chasing rankings.</span>
+          </div>
+        </li>
+        <li>
+          <div class="rank-num">06</div>
+          <div>
+            <h4>Keep page speed and mobile-friendliness as ongoing hygiene</h4>
+            <p class="evidence">Evidence: small, consistent, positive CTR association; not a top movement-model feature.</p>
+            <span class="action">Action: maintain technical health continuously — necessary, but not the headline initiative.</span>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section id="reproducibility">
+      <div class="section-num">Section 7</div>
+      <h2>Reproducibility</h2>
+      <p>Every number and chart on this page is generated, not hand-typed — re-running the notebooks in order reproduces this page exactly (on the synthetic data) or updates it (once pointed at the real warehouse).</p>
+      <div class="repo-links">
+        <a href="../work/01_data_intake_eda.ipynb">01 — Data intake &amp; EDA</a>
+        <a href="../work/02_feature_engineering.ipynb">02 — Feature engineering</a>
+        <a href="../work/03_baseline_and_signal_model.ipynb">03 — Baseline vs. signal model</a>
+        <a href="../work/04_validation_leakage_checks.ipynb">04 — Validation &amp; leakage checks</a>
+        <a href="../work/capstone_ranking_signal_analysis.ipynb">Capstone notebook</a>
+      </div>
+      <h3>Swapping in the real dataset</h3>
+      <p>One change, in notebook 01, replaces the synthetic panel with the real gated warehouse — every downstream cell is unchanged:</p>
+      <pre><code>con = duckdb.connect()
+con.sql("SET hf_token='&lt;your_token&gt;';")
+panel = con.sql(
+    "SELECT * FROM read_parquet('hf://datasets/&lt;flyrank-repo&gt;/*.parquet')"
+).df()</code></pre>
+      <p>Re-run notebooks 01→04→capstone in order; the ranked recommendations table and every figure on this page regenerate from the saved metrics automatically.</p>
+    </section>
+
+    <section id="acknowledgments">
+      <div class="section-num">Acknowledgments</div>
+      <h2>Data credit</h2>
+      <div class="credit-box">
+        <p>Built on the FlyRank ML Internship dataset — <a href="https://flyrank.ai" target="_blank" rel="noopener">flyrank.ai</a>. This deployed build ran on a synthetic placeholder matched to that dataset's schema (Section 2); results will be re-run and republished against the real release.</p>
+      </div>
+    </section>
+
+    <footer>
+      <p>Search Intelligence Capstone — Ranking Signal Analysis lane. No client names, domains, URLs, private queries, credentials, or raw exports appear anywhere in this repo, per the program's public-data rule.</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  // One deliberate interactive moment: highlight the active TOC section on scroll.
+  const links = Array.from(document.querySelectorAll('nav.toc a'));
+  const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const setActive = () => {
+    let current = sections[0];
+    const y = window.scrollY + 140;
+    for (const s of sections) { if (s.offsetTop <= y) current = s; }
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current.id));
+  };
+  document.addEventListener('scroll', setActive, { passive: true });
+  window.addEventListener('load', setActive);
+</script>
+
+</body>
+</html>

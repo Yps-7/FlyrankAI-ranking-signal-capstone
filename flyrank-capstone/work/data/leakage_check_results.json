@@ -1,0 +1,11 @@
+{
+  "grouped_cv_auc_mean": 0.5956,
+  "grouped_cv_auc_std": 0.0151,
+  "grouped_cv_folds": [
+    0.5749,
+    0.6104,
+    0.6151,
+    0.586,
+    0.5917
+  ]
+}

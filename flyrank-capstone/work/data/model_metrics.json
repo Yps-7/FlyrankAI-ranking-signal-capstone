@@ -1,0 +1,12 @@
+{
+  "baseline_auc": 0.4925,
+  "baseline_ap": 0.1296,
+  "full_auc": 0.5307,
+  "full_ap": 0.1509,
+  "val_auc": 0.5339,
+  "test_base_rate": 0.1289,
+  "ctr_r2_test": 0.1274,
+  "n_train": 13500,
+  "n_val": 2700,
+  "n_test": 3600
+}
