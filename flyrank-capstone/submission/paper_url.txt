@@ -1,1 +1,1 @@
-REPLACE_WITH_YOUR_DEPLOYED_PAPER_URL_e.g_https://yourusername.github.io/your-repo/
+submission paper URL =  "file:///Y:/FlyRank%20AI/flyrank-capstone/reasearch%20paper_preview.html".
